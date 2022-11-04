@@ -9,7 +9,7 @@ import {
   INSTRUCTION_BYTE_LENGTH,
   InstructionBinaryMap,
   Instructions,
-  Operation
+  Operation,
 } from "@danielhammerl/dca-architecture";
 
 export const InstructionMap: Record<Instructions, Operation> = {
@@ -66,6 +66,11 @@ export const InstructionMap: Record<Instructions, Operation> = {
     if (doJump) {
       setRegisterValue("RPC", jumpTo, true);
     }
+  },
+  MOV: (operand1, operand2) => {
+    const value = getRegisterValue(operand1);
+    setRegisterValue(operand2, value);
+    loadNextInstruction();
   },
 };
 
