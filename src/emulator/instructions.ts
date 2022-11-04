@@ -12,7 +12,7 @@ import {
   Operation,
 } from "@danielhammerl/dca-architecture";
 
-export const InstructionMap: Record<Instructions, Operation> = {
+export const InstructionMap: Record<typeof Instructions[number], Operation> = {
   LOAD: (operand1, operand2) => {
     const memoryAddress = getRegisterValue(operand1);
     const valueInMemory = getMemoryCell(memoryAddress);
@@ -82,7 +82,7 @@ export const loadNextInstruction = () => {
   setRegisterValue("RPC", nextInstruction, true);
 };
 
-export const getInstructionFromOpCode = (opcode: Byte): Instructions => {
+export const getInstructionFromOpCode = (opcode: Byte): typeof Instructions[number] => {
   const instruction = Object.entries(InstructionBinaryMap).find(([_, instructionOpCode]) =>
     isEqual(opcode, instructionOpCode)
   );
@@ -91,5 +91,5 @@ export const getInstructionFromOpCode = (opcode: Byte): Instructions => {
     throw new Error("Invalid opcode " + opcode);
   }
 
-  return instruction[0] as Instructions;
+  return instruction[0] as typeof Instructions[number];
 };

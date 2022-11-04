@@ -3,7 +3,7 @@ import { decToHalfWord, halfWordToDec, isByte, logOnDebug } from "./util";
 import { getMemoryCell, setMemoryCell } from "./memory";
 import { getInstructionFromOpCode, InstructionMap } from "./instructions";
 import isEqual from "lodash.isequal";
-import {Instruction} from "@danielhammerl/dca-architecture";
+import { Instruction } from "@danielhammerl/dca-architecture";
 
 export const run = (instructionsFromFile: string, debugMode = false) => {
   logOnDebug("starting in debug mode");

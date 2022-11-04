@@ -3,13 +3,13 @@ import isEqual from "lodash.isequal";
 import {
   EMPTY_HALF_WORD,
   HalfWord,
-  Register,
+  Registers,
   registerBinaryCode,
 } from "@danielhammerl/dca-architecture";
 
-const readOnlyRegisterList: Register[] = ["RPC", "RSP"];
+const readOnlyRegisterList: Partial<typeof Registers> = ["RPC", "RSP"];
 
-const registerData: Record<Register, HalfWord> = {
+const registerData: Record<typeof Registers[number], HalfWord> = {
   RPC: EMPTY_HALF_WORD,
   RSP: EMPTY_HALF_WORD,
   R00: EMPTY_HALF_WORD,
@@ -24,7 +24,7 @@ const registerData: Record<Register, HalfWord> = {
   R09: EMPTY_HALF_WORD,
 };
 
-const getRegisterNameByBinaryCode = (data: HalfWord): Register => {
+const getRegisterNameByBinaryCode = (data: HalfWord): typeof Registers[number] => {
   const x = Object.entries(registerBinaryCode).find(([_, registerBinaryCode]) =>
     isEqual(registerBinaryCode, data)
   );
@@ -33,10 +33,14 @@ const getRegisterNameByBinaryCode = (data: HalfWord): Register => {
     throw new Error("Unknown register " + data);
   }
 
-  return x[0] as Register;
+  return x[0] as typeof Registers[number];
 };
 
-export const setRegisterValue = (register: Register | HalfWord, data: HalfWord, unsafe = false) => {
+export const setRegisterValue = (
+  register: typeof Registers[number] | HalfWord,
+  data: HalfWord,
+  unsafe = false
+) => {
   const registerName =
     typeof register === "string" ? register : getRegisterNameByBinaryCode(register);
   if (readOnlyRegisterList.includes(registerName)) {
@@ -47,7 +51,7 @@ export const setRegisterValue = (register: Register | HalfWord, data: HalfWord, 
   registerData[registerName] = data;
 };
 
-export const getRegisterValue = (register: Register | HalfWord) => {
+export const getRegisterValue = (register: typeof Registers[number] | HalfWord) => {
   const registerName =
     typeof register === "string" ? register : getRegisterNameByBinaryCode(register);
 

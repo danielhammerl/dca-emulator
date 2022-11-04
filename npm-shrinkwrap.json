@@ -9,7 +9,7 @@
       "version": "0.1.0",
       "license": "ISC",
       "dependencies": {
-        "@danielhammerl/dca-architecture": "^0.2.0",
+        "@danielhammerl/dca-architecture": "^0.2.1",
         "lodash.clonedeep": "^4.5.0",
         "lodash.isequal": "^4.5.0",
         "ts-node": "^10.9.1"
@@ -617,9 +617,9 @@
       }
     },
     "node_modules/@danielhammerl/dca-architecture": {
-      "version": "0.2.0",
-      "resolved": "http://dham-raspberry:12345/@danielhammerl%2fdca-architecture/-/dca-architecture-0.2.0.tgz",
-      "integrity": "sha512-AiY9rluqfIq4OqRlTXQKTwFcOHAIhsb5mZZOXoZW/A1hTrTP1a6oJh1yGt9Qc6UDCrHl6NhVmWNewSgCfQ7CjA==",
+      "version": "0.2.1",
+      "resolved": "http://dham-raspberry:12345/@danielhammerl%2fdca-architecture/-/dca-architecture-0.2.1.tgz",
+      "integrity": "sha512-6j262q2yx5K/PVaVQ+e8MKqIZgBrCYM2YEmJgyY7xO8gTUg1MfqcV4v/nDB0tkcG1iDBg+hddNw3sZWmTsbDmg==",
       "dependencies": {
         "typescript": "^4.5.4"
       }
@@ -4189,9 +4189,9 @@
       }
     },
     "@danielhammerl/dca-architecture": {
-      "version": "0.2.0",
-      "resolved": "http://dham-raspberry:12345/@danielhammerl%2fdca-architecture/-/dca-architecture-0.2.0.tgz",
-      "integrity": "sha512-AiY9rluqfIq4OqRlTXQKTwFcOHAIhsb5mZZOXoZW/A1hTrTP1a6oJh1yGt9Qc6UDCrHl6NhVmWNewSgCfQ7CjA==",
+      "version": "0.2.1",
+      "resolved": "http://dham-raspberry:12345/@danielhammerl%2fdca-architecture/-/dca-architecture-0.2.1.tgz",
+      "integrity": "sha512-6j262q2yx5K/PVaVQ+e8MKqIZgBrCYM2YEmJgyY7xO8gTUg1MfqcV4v/nDB0tkcG1iDBg+hddNw3sZWmTsbDmg==",
       "requires": {
         "typescript": "^4.5.4"
       }
