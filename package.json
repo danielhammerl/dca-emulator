@@ -9,6 +9,10 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
+  "entry": false,
+  "bin": {
+    "dca-emulator": "src/index.ts"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
