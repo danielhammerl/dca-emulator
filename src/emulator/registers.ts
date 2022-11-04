@@ -1,7 +1,11 @@
-import { HalfWord, Register } from "./types";
-import { EMPTY_BYTE, EMPTY_HALF_WORD } from "./consants";
 import cloneDeep from "lodash.clonedeep";
 import isEqual from "lodash.isequal";
+import {
+  EMPTY_HALF_WORD,
+  HalfWord,
+  Register,
+  registerBinaryCode,
+} from "@danielhammerl/dca-architecture";
 
 const readOnlyRegisterList: Register[] = ["RPC", "RSP"];
 
@@ -18,21 +22,6 @@ const registerData: Record<Register, HalfWord> = {
   R07: EMPTY_HALF_WORD,
   R08: EMPTY_HALF_WORD,
   R09: EMPTY_HALF_WORD,
-};
-
-const registerBinaryCode: Record<Register, HalfWord> = {
-  RPC: [EMPTY_BYTE, "00000001"],
-  R00: [EMPTY_BYTE, "00000010"],
-  R01: [EMPTY_BYTE, "00000011"],
-  R02: [EMPTY_BYTE, "00000100"],
-  R03: [EMPTY_BYTE, "00000101"],
-  R04: [EMPTY_BYTE, "00000110"],
-  R05: [EMPTY_BYTE, "00000111"],
-  R06: [EMPTY_BYTE, "00001000"],
-  R07: [EMPTY_BYTE, "00001001"],
-  R08: [EMPTY_BYTE, "00001010"],
-  R09: [EMPTY_BYTE, "00001011"],
-  RSP: [EMPTY_BYTE, "00100000"],
 };
 
 const getRegisterNameByBinaryCode = (data: HalfWord): Register => {

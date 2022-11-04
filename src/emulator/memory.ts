@@ -1,6 +1,6 @@
-import { EMPTY_BYTE, MEMORY_SIZE } from "./consants";
-import { Byte, HalfWord } from "./types";
 import { halfWordToDec } from "./util";
+import {MEMORY_SIZE} from "./consants";
+import {Byte, EMPTY_BYTE, HalfWord} from "@danielhammerl/dca-architecture";
 
 const memory: Byte[] = Array(MEMORY_SIZE).fill(EMPTY_BYTE);
 

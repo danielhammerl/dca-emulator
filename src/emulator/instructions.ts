@@ -1,9 +1,16 @@
-import { Byte, HalfWord, Instruction, Instructions, Operation } from "./types";
 import { getRegisterValue, setRegisterValue } from "./registers";
 import { getMemoryCell, setMemoryCell } from "./memory";
-import { EMPTY_BYTE, INSTRUCTION_BYTE_LENGTH } from "./consants";
 import { decToHalfWord, halfWordToDec } from "./util";
 import isEqual from "lodash.isequal";
+import {
+  Byte,
+  EMPTY_BYTE,
+  HalfWord,
+  INSTRUCTION_BYTE_LENGTH,
+  InstructionBinaryMap,
+  Instructions,
+  Operation
+} from "@danielhammerl/dca-architecture";
 
 export const InstructionMap: Record<Instructions, Operation> = {
   LOAD: (operand1, operand2) => {
@@ -68,17 +75,6 @@ export const loadNextInstruction = () => {
   const nextInstructionIndex = currentInstructionIndex + INSTRUCTION_BYTE_LENGTH;
   const nextInstruction = decToHalfWord(nextInstructionIndex);
   setRegisterValue("RPC", nextInstruction, true);
-};
-
-export const InstructionBinaryMap: Record<Instructions, Byte> = {
-  LOAD: "00000001",
-  STORE: "00000010",
-  SET: "00000011",
-  LOADH: "00000100",
-  STOREH: "00000101",
-  ADD: "00000110",
-  SUB: "00000111",
-  CJUMP: "00001000",
 };
 
 export const getInstructionFromOpCode = (opcode: Byte): Instructions => {

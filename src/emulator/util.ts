@@ -1,5 +1,12 @@
-import { BYTE_LENGTH, HALF_WORD_LENGTH, MAX_BYTE_VALUE, MAX_HALF_WORD_VALUE } from "./consants";
-import { Bit, Byte, HalfWord } from "./types";
+import {
+  Bit,
+  Byte,
+  BYTE_LENGTH,
+  HALF_WORD_LENGTH,
+  HalfWord,
+  MAX_BYTE_VALUE,
+  MAX_HALF_WORD_VALUE,
+} from "@danielhammerl/dca-architecture";
 
 export const hexToDec = (hex: string): number => parseInt(hex.replaceAll("#", ""), 16);
 export const decToHex = (dec: number, withPrefix: boolean = true): string => {
