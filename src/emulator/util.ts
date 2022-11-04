@@ -27,7 +27,7 @@ export const byteToDec = (byte: Byte): number => parseInt(byte, 2);
 
 export const decToHalfWord = (dec: number): HalfWord => {
   if (dec < 0) {
-    throw new Error("decToByte only supports positive numbers and zero");
+    throw new Error("decToHalfWord only supports positive numbers and zero");
   }
   const normalizedValue = dec % (MAX_HALF_WORD_VALUE + 1);
   const halfWordAsString = normalizedValue.toString(2).padStart(HALF_WORD_LENGTH, "0");

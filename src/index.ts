@@ -4,7 +4,7 @@ import { run } from "./emulator";
 import { EOL } from "os";
 
 const sourceCode = fs
-  .readFileSync(process.argv[2] || "./source.dbin", { encoding: "utf-8" })
+  .readFileSync(process.argv[2] || "./source.dcabin", { encoding: "utf-8" })
   .replaceAll(EOL, " ");
 
 if (process.argv[3] === "--debug") {
