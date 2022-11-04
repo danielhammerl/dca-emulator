@@ -1,4 +1,4 @@
-import { Byte, HalfWord, Instruction, Instructions } from "./types";
+import { Instruction } from "./types";
 import { getRegisterValue, registerDump, setRegisterValue } from "./registers";
 import { decToHalfWord, halfWordToDec, isByte, logOnDebug } from "./util";
 import { getMemoryCell, setMemoryCell } from "./memory";
