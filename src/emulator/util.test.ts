@@ -6,6 +6,7 @@ import {
   getBaseLog,
   halfWordToDec,
   hexToDec,
+  hrtimeToHumanReadableString,
   isBit,
   isByte,
   isHalfWord,
@@ -76,5 +77,12 @@ describe("util", () => {
   });
   it("getBaseLog", () => {
     expect(getBaseLog(10, 1000)).toBeCloseTo(3, 5);
+  });
+  it("hrtimeToHumanReadableString", () => {
+    expect(hrtimeToHumanReadableString(BigInt(9))).toBe("~9ns");
+    expect(hrtimeToHumanReadableString(BigInt(1234))).toBe("~1234ns");
+    expect(hrtimeToHumanReadableString(BigInt(1000001))).toBe("~1000µs");
+    expect(hrtimeToHumanReadableString(BigInt(1000000001))).toBe("~1000ms");
+    expect(hrtimeToHumanReadableString(BigInt(10090000000))).toBe("~10s");
   });
 });

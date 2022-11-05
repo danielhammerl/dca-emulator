@@ -1,11 +1,12 @@
 import { getRegisterValue, setRegisterValue } from "./registers";
 import { getMemoryCell, setMemoryCell } from "./memory";
-import { decToHalfWord, halfWordToDec } from "./util";
+import { decToHalfWord, halfWordToDec, halfWordToHex } from "./util";
 import isEqual from "lodash.isequal";
 import {
   Byte,
   EMPTY_BYTE,
   HalfWord,
+  Instruction,
   INSTRUCTION_BYTE_LENGTH,
   InstructionBinaryMap,
   Instructions,
@@ -92,4 +93,12 @@ export const getInstructionFromOpCode = (opcode: Byte): typeof Instructions[numb
   }
 
   return instruction[0] as typeof Instructions[number];
+};
+
+export const instructionToHumanReadable = (instruction: Instruction): string => {
+  return [
+    getInstructionFromOpCode(instruction.opcode),
+    halfWordToHex(instruction.operand1),
+    halfWordToHex(instruction.operand2),
+  ].join(" - ");
 };

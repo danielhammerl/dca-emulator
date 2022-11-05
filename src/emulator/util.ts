@@ -4,16 +4,19 @@ import {
   BYTE_LENGTH,
   HALF_WORD_LENGTH,
   HalfWord,
+  Instruction,
   MAX_BYTE_VALUE,
   MAX_HALF_WORD_VALUE,
 } from "@danielhammerl/dca-architecture";
 
-export const hexToDec = (hex: string): number => parseInt(hex.replaceAll("#", ""), 16);
+export const hexToDec = (hex: string): number =>
+  parseInt(hex.replaceAll("#", "").replaceAll("0x", ""), 16);
+
 export const decToHex = (dec: number, withPrefix: boolean = true): string => {
   if (dec < 0) {
     throw new Error("decToHex only supports positive numbers and zero");
   }
-  return (withPrefix ? "#" : "") + dec.toString(16);
+  return (withPrefix ? "0x" : "") + dec.toString(16).padStart(2, "0");
 };
 
 export const decToByte = (dec: number): Byte => {
@@ -24,6 +27,9 @@ export const decToByte = (dec: number): Byte => {
   return normalizedValue.toString(2).padStart(BYTE_LENGTH, "0") as Byte;
 };
 export const byteToDec = (byte: Byte): number => parseInt(byte, 2);
+
+export const byteToHex = (byte: Byte): string => decToHex(byteToDec(byte));
+export const halfWordToHex = (halfWord: HalfWord): string => decToHex(halfWordToDec(halfWord));
 
 export const decToHalfWord = (dec: number): HalfWord => {
   if (dec < 0) {
@@ -62,8 +68,24 @@ export const getBaseLog = (x: number, y: number): number => {
   return Math.log(y) / Math.log(x);
 };
 
+export const isDebug = () => process.env.DEBUG === "true";
+
 export const logOnDebug = (...data: any) => {
-  if (process.env.DEBUG === "true") {
+  if (isDebug()) {
     console.log(...data);
   }
 };
+
+export const hrtimeToHumanReadableString = (time: bigint): string => {
+  let counter = 0;
+  let tempTime = time;
+  const suffix = ["ns", "µs", "ms", "s"];
+  while (tempTime >= 10000 && counter < 3) {
+    tempTime = tempTime / BigInt(1000);
+    counter++;
+  }
+  return "~" + tempTime.toString() + suffix[counter];
+};
+
+export const averageOfBigIntArray = (arr: bigint[]): bigint =>
+  arr.reduce((a, b) => a + b, BigInt(0)) / BigInt(arr.length);

@@ -2,17 +2,39 @@
 import fs from "fs";
 import { run } from "./emulator";
 import { EOL } from "os";
-import {initGpu} from "./emulator/gpu";
+import { program } from "commander";
+import { execSync } from "child_process";
 
-initGpu();
+program
+  .argument("[source]", "source file", "./source.dcabin")
+  .option("--debug", "debug mode", false)
+  .option(
+    "-as, --assemble",
+    "use dasm as input instead of bytecode and assemble it before emulating",
+    false
+  )
+  .option(
+    "--delay <delay>",
+    "(in ms) add a delay after each instruction for a artificial slow down",
+    "0"
+  )
+  .action((source, options) => {
+    const startTime = process.hrtime.bigint();
+    // read utf-8 representation of bytecode from given input
+    const byteCode = options.assemble
+      ? assemble(source)
+      : fs.readFileSync(source, { encoding: "utf-8" }).replaceAll(EOL, " ");
+    if (options.debug) {
+      process.env.DEBUG = "true";
+    }
 
-// read utf-8 representation of bytecode from given input
-const sourceCode = fs
-  .readFileSync(process.argv[2] || "./source.dcabin", { encoding: "utf-8" })
-  .replaceAll(EOL, " ");
+    run(byteCode, startTime, { delay: parseInt(options.delay ?? "0") || 0 });
+  });
 
-if (process.argv[3] === "--debug") {
-  process.env.DEBUG = "true";
-}
+const assemble = (sourcePath: string): string =>
+  execSync("dca-assembler " + sourcePath)
+    .toString()
+    .replaceAll(EOL, "")
+    .trim();
 
-run(sourceCode);
+program.parse();
