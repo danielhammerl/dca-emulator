@@ -66,12 +66,24 @@ export const InstructionMap: Record<typeof Instructions[number], Operation> = {
 
     if (doJump) {
       setRegisterValue("RPC", jumpTo, true);
+    } else {
+      loadNextInstruction();
     }
   },
   MOV: (operand1, operand2) => {
     const value = getRegisterValue(operand1);
     setRegisterValue(operand2, value);
     loadNextInstruction();
+  },
+  CJUMPI: (operand1, operand2) => {
+    const jumpTo = getRegisterValue(operand1);
+    const doJump = halfWordToDec(getRegisterValue(operand2)) !== 0;
+
+    if (doJump) {
+      setRegisterValue("RPC", jumpTo, true);
+    } else {
+      loadNextInstruction();
+    }
   },
 };
 
