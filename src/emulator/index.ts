@@ -7,6 +7,7 @@ import {
   hrtimeToHumanReadableString,
   isByte,
   isDebug,
+  isDebugGpu,
   logOnDebug,
 } from "./util";
 import { getMemoryCell, setMemoryCell } from "./memory";
@@ -16,8 +17,16 @@ import {
   instructionToHumanReadable,
 } from "./instructions";
 import isEqual from "lodash.isequal";
-import { Instruction } from "@danielhammerl/dca-architecture";
+import {
+  Byte,
+  GPU_ADDRESS_BUS_POINTER,
+  gpuInstructionMap,
+  GpuInstructions,
+  HalfWord,
+  Instruction,
+} from "@danielhammerl/dca-architecture";
 import { RunOptions } from "./types";
+import { clear, draw } from "./gpu";
 
 let programFinished: boolean = false;
 const instructionDurations: bigint[] = [];
@@ -110,12 +119,15 @@ const mainLoop = (onFinish: () => void) => {
     );
   }
 
+  gpuCycle();
+
   const nextInstruction = getRegisterValue("RPC");
   const finished = isEqual(nextInstruction, getRegisterValue("RSP"));
 
   const instructionEnd = process.hrtime.bigint();
   const instructionDuration = instructionEnd - instructionStart;
   const instructionPureExecTimeDuration = instructionExecTimeEnd - instructionExecTimeStart;
+
   instructionPureExecTimeDurations.push(instructionPureExecTimeDuration);
   instructionDurations.push(instructionDuration);
   logOnDebug(
@@ -129,4 +141,57 @@ const mainLoop = (onFinish: () => void) => {
   if (finished) {
     onFinish();
   }
+};
+
+const gpuCycle = () => {
+  const gpuOperationOpCode = getMemoryCell(GPU_ADDRESS_BUS_POINTER);
+  const gpuAddressBusPointerIndex = halfWordToDec(GPU_ADDRESS_BUS_POINTER);
+  const gpuInstruction = getGpuInstructionFromOpcode(gpuOperationOpCode);
+
+  if (isDebugGpu()) {
+    console.log("Reading GPU instruction:" + gpuInstruction);
+  }
+
+  if (gpuInstruction === "DRAW") {
+    const xPosData: HalfWord = [
+      getMemoryCell(gpuAddressBusPointerIndex + 1),
+      getMemoryCell(gpuAddressBusPointerIndex + 2),
+    ];
+    const yPosData: HalfWord = [
+      getMemoryCell(gpuAddressBusPointerIndex + 3),
+      getMemoryCell(gpuAddressBusPointerIndex + 4),
+    ];
+    const colorData: HalfWord = [
+      getMemoryCell(gpuAddressBusPointerIndex + 5),
+      getMemoryCell(gpuAddressBusPointerIndex + 6),
+    ];
+    const colorDataAsString = colorData.join("");
+
+    const redData = parseInt(colorDataAsString.substring(0, 5), 2); // 5 byte
+    const greenData = parseInt(colorDataAsString.substring(5, 11), 2); // 6 byte
+    const blueData = parseInt(colorDataAsString.substring(11, 16), 2); // 5 byte
+
+    const xPos = halfWordToDec(xPosData);
+    const yPos = halfWordToDec(yPosData);
+
+    const red = (redData / Math.pow(2, 5)) * 255;
+    const green = (greenData / Math.pow(2, 6)) * 255;
+    const blue = (blueData / Math.pow(2, 5)) * 255;
+
+    draw({ xPos, yPos, color: { red, green, blue } });
+  } else if (gpuInstruction === "CLEAR") {
+    clear();
+  }
+};
+
+export const getGpuInstructionFromOpcode = (opcode: Byte): typeof GpuInstructions[number] => {
+  const instruction = Object.entries(gpuInstructionMap).find(([_, instructionOpCode]) =>
+    isEqual(opcode, instructionOpCode)
+  );
+
+  if (!instruction) {
+    throw new Error("Invalid gpu opcode " + opcode);
+  }
+
+  return instruction[0] as typeof GpuInstructions[number];
 };

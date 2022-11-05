@@ -1,0 +1,15 @@
+SET r00 0x02 # set gpu opcode DRAW
+SET r01 0x01 # set xpos to 1
+SET r02 0x01 # set ypos to 1
+SET r03 0xff20 # set color to yellow-ish
+
+SET r04 0xff00
+SET r05 0xff01
+SET r06 0xff03
+SET r07 0xff05
+
+STORE r00 r04
+STOREH r01 r05
+STOREH r02 r06
+STOREH r03 r07
+STORE r09 r04

@@ -8,6 +8,7 @@ import { execSync } from "child_process";
 program
   .argument("[source]", "source file", "./source.dcabin")
   .option("--debug", "debug mode", false)
+  .option("--debugGpu", "debug gpu mode", false)
   .option(
     "-as, --assemble",
     "use dasm as input instead of bytecode and assemble it before emulating",
@@ -28,7 +29,14 @@ program
       process.env.DEBUG = "true";
     }
 
-    run(byteCode, startTime, { delay: parseInt(options.delay ?? "0") || 0 });
+    if(options.debugGpu) {
+      process.env.DEBUG_GPU = "true";
+    }
+
+    run(byteCode, startTime, {
+      delay: parseInt(options.delay ?? "0") || 0,
+      debugGpu: options.debugGpu,
+    });
   });
 
 const assemble = (sourcePath: string): string =>

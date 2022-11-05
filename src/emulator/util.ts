@@ -4,7 +4,6 @@ import {
   BYTE_LENGTH,
   HALF_WORD_LENGTH,
   HalfWord,
-  Instruction,
   MAX_BYTE_VALUE,
   MAX_HALF_WORD_VALUE,
 } from "@danielhammerl/dca-architecture";
@@ -69,6 +68,7 @@ export const getBaseLog = (x: number, y: number): number => {
 };
 
 export const isDebug = () => process.env.DEBUG === "true";
+export const isDebugGpu = () => process.env.DEBUG_GPU === "true";
 
 export const logOnDebug = (...data: any) => {
   if (isDebug()) {

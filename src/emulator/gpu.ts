@@ -26,7 +26,7 @@ export type GpuPixel = {
   };
 };
 
-// special thanks go to my 5th grade math teacher here
+// special thanks goes to my 5th grade math teacher here
 export const draw = (pixel: GpuPixel) => {
   const pixelInBufferIndex = pixel.yPos * window.height * 4 * scale + pixel.xPos * 4 * scale;
 
@@ -41,4 +41,8 @@ export const draw = (pixel: GpuPixel) => {
   }
 
   window.render(width, height, stride, "rgba32", videoBuffer);
+};
+
+export const clear = () => {
+  videoBuffer.fill(0);
 };
