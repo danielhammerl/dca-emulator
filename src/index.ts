@@ -2,6 +2,9 @@
 import fs from "fs";
 import { run } from "./emulator";
 import { EOL } from "os";
+import {initGpu} from "./emulator/gpu";
+
+initGpu();
 
 // read utf-8 representation of bytecode from given input
 const sourceCode = fs
