@@ -4,6 +4,7 @@ import {
   BYTE_LENGTH,
   HALF_WORD_LENGTH,
   HalfWord,
+  Instruction,
   MAX_BYTE_VALUE,
   MAX_HALF_WORD_VALUE,
 } from "@danielhammerl/dca-architecture";
@@ -62,8 +63,24 @@ export const getBaseLog = (x: number, y: number): number => {
   return Math.log(y) / Math.log(x);
 };
 
+export const isDebug = () => process.env.DEBUG === "true";
+
 export const logOnDebug = (...data: any) => {
-  if (process.env.DEBUG === "true") {
+  if (isDebug()) {
     console.log(...data);
   }
 };
+
+export const hrtimeToHumanReadableString = (time: bigint): string => {
+  let counter = 0;
+  let tempTime = time;
+  const suffix = ["ns", "µs", "ms", "s"];
+  while (tempTime >= 10000 && counter < 3) {
+    tempTime = tempTime / BigInt(1000);
+    counter++;
+  }
+  return "~" + tempTime.toString() + suffix[counter];
+};
+
+export const averageOfBigIntArray = (arr: bigint[]): bigint =>
+  arr.reduce((a, b) => a + b, BigInt(0)) / BigInt(arr.length);

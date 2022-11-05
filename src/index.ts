@@ -2,14 +2,20 @@
 import fs from "fs";
 import { run } from "./emulator";
 import { EOL } from "os";
+import { program } from "commander";
 
-// read utf-8 representation of bytecode from given input
-const sourceCode = fs
-  .readFileSync(process.argv[2] || "./source.dcabin", { encoding: "utf-8" })
-  .replaceAll(EOL, " ");
+program
+  .argument("[source]", "source file", "./source.dcabin")
+  .option("--debug", "debug mode", false)
+  .action((source, options) => {
+    const startTime = process.hrtime.bigint();
+    // read utf-8 representation of bytecode from given input
+    const sourceCode = fs.readFileSync(source, { encoding: "utf-8" }).replaceAll(EOL, " ");
+    if (options.debug) {
+      process.env.DEBUG = "true";
+    }
 
-if (process.argv[3] === "--debug") {
-  process.env.DEBUG = "true";
-}
+    run(sourceCode, startTime);
+  });
 
-run(sourceCode);
+program.parse();

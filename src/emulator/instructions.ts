@@ -6,6 +6,7 @@ import {
   Byte,
   EMPTY_BYTE,
   HalfWord,
+  Instruction,
   INSTRUCTION_BYTE_LENGTH,
   InstructionBinaryMap,
   Instructions,
@@ -92,4 +93,12 @@ export const getInstructionFromOpCode = (opcode: Byte): typeof Instructions[numb
   }
 
   return instruction[0] as typeof Instructions[number];
+};
+
+export const instructionToHumanReadable = (instruction: Instruction): string => {
+  return [
+    getInstructionFromOpCode(instruction.opcode),
+    instruction.operand1.join(" "),
+    instruction.operand2.join(" "),
+  ].join(" - ");
 };
