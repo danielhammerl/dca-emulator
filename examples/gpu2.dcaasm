@@ -2,6 +2,7 @@ SET r00 0x02 # set gpu opcode DRAW
 SET r01 0x01 # set xpos to 1
 SET r02 0x01 # set ypos to 1
 SET r03 0xff20 # set color to yellow-ish
+SET r09 0x00ff # max runs
 
 SET r04 0xff00
 SET r05 0xff01
@@ -14,7 +15,6 @@ STOREH r02 r06
 STOREH r03 r07
 
 SET r08 0x01
-SET r09 0x00ff
 SUB r09 r08
 ADD r01 r08
 

@@ -27,10 +27,12 @@ import {
 } from "@danielhammerl/dca-architecture";
 import { RunOptions } from "./types";
 import { clear, draw } from "./gpu";
+import throttle from "lodash.throttle";
 
 let programFinished: boolean = false;
 const instructionDurations: bigint[] = [];
 const instructionPureExecTimeDurations: bigint[] = [];
+const mainLoopDurations: bigint[] = [];
 
 export const run = async (instructionsFromFile: string, startTime: bigint, options: RunOptions) => {
   logOnDebug("starting in debug mode");
@@ -55,35 +57,50 @@ export const run = async (instructionsFromFile: string, startTime: bigint, optio
 
   const mainLoopOnFinish = () => {
     programFinished = true;
-    const endTime = process.hrtime.bigint();
-    const fullProgrammDuration = endTime - startTime;
-    logOnDebug("Program finished in " + hrtimeToHumanReadableString(fullProgrammDuration));
-    logOnDebug(
-      "A total of " +
-        instructionDurations.length +
-        " instructions where executed with an average duration of " +
-        hrtimeToHumanReadableString(averageOfBigIntArray(instructionDurations)) +
-        " (pure exec time is in average " +
-        hrtimeToHumanReadableString(averageOfBigIntArray(instructionPureExecTimeDurations)) +
-        ")"
-    );
-    if (options.delay > 0) {
-      logOnDebug(
-        "Info: Time measurements arent meaningful because an artificial delay of " +
-          options.delay +
-          "ms was added"
-      );
-    }
   };
 
   while (!programFinished) {
+    const mainLoopStartTimestamp = process.hrtime.bigint();
     mainLoop(mainLoopOnFinish);
 
     if (options.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, options.delay));
+    } else {
+      // from time to time we have to make a short wait for opengl stuff
+      await shortWait();
     }
+    const mainLoopEndTimestamp = process.hrtime.bigint();
+    const diff = mainLoopEndTimestamp - mainLoopStartTimestamp;
+    mainLoopDurations.push(diff);
+    logOnDebug("Mainloop took " + hrtimeToHumanReadableString(diff));
   }
+
+  const endTime = process.hrtime.bigint();
+  const fullProgrammDuration = endTime - startTime;
+  logOnDebug("Program finished in " + hrtimeToHumanReadableString(fullProgrammDuration));
+  logOnDebug(
+    "A total of " +
+      instructionDurations.length +
+      " instructions where executed with an average duration of " +
+      hrtimeToHumanReadableString(averageOfBigIntArray(instructionDurations)) +
+      " (pure exec time is in average " +
+      hrtimeToHumanReadableString(averageOfBigIntArray(instructionPureExecTimeDurations)) +
+      ")"
+  );
+  if (options.delay > 0) {
+    logOnDebug(
+      "Info: Time measurements arent meaningful because an artificial delay of " +
+        options.delay +
+        "ms was added"
+    );
+  }
+
+  const averageMainLoopTime = averageOfBigIntArray(mainLoopDurations);
+  // const frequency = BigInt(1) / (fullProgrammDuration / BigInt(instructionDurations.length));
+  logOnDebug("Mainloop took " + hrtimeToHumanReadableString(averageMainLoopTime));
 };
+
+const shortWait = throttle(() => new Promise((resolve) => setTimeout(resolve, 1 / 1000000)), 500);
 
 const mainLoop = (onFinish: () => void) => {
   logOnDebug("-------------------------------");

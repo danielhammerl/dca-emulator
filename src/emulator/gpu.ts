@@ -1,4 +1,5 @@
 import sdl from "@kmamal/sdl";
+import throttle from "lodash.throttle";
 
 const WINDOW_HEIGHT = 150;
 const WINDOW_WIDTH = 150;
@@ -40,8 +41,11 @@ export const draw = (pixel: GpuPixel) => {
     }
   }
 
-  window.render(width, height, stride, "rgba32", videoBuffer);
+  rerender();
 };
+
+// dont rerender on every tick,
+const rerender = throttle(() => window.render(width, height, stride, "rgba32", videoBuffer), 40);
 
 export const clear = () => {
   videoBuffer.fill(0);
