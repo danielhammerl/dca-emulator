@@ -12,4 +12,4 @@ if (process.argv[3] === "--debug") {
   process.env.DEBUG = "true";
 }
 
-run(sourceCode, process.env.DEBUG === "true");
+run(sourceCode);

@@ -5,7 +5,7 @@ import { getInstructionFromOpCode, InstructionMap } from "./instructions";
 import isEqual from "lodash.isequal";
 import { Instruction } from "@danielhammerl/dca-architecture";
 
-export const run = (instructionsFromFile: string, debugMode = false) => {
+export const run = (instructionsFromFile: string) => {
   logOnDebug("starting in debug mode");
   const instructionsFromFileAsArray = instructionsFromFile.split(" ");
 
