@@ -15,11 +15,13 @@ import {
 } from "./instructions";
 import isEqual from "lodash.isequal";
 import { Instruction } from "@danielhammerl/dca-architecture";
+import { RunOptions } from "./types";
 
+let programFinished: boolean = false;
 const instructionDurations: bigint[] = [];
 const instructionPureExecTimeDurations: bigint[] = [];
 
-export const run = (instructionsFromFile: string, startTime: bigint) => {
+export const run = async (instructionsFromFile: string, startTime: bigint, options: RunOptions) => {
   logOnDebug("starting in debug mode");
   const instructionsFromFileAsArray = instructionsFromFile.split(" ");
 
@@ -39,24 +41,36 @@ export const run = (instructionsFromFile: string, startTime: bigint) => {
   });
 
   setRegisterValue("RSP", decToHalfWord(instructionsByteLength), true);
-  let programFinished: boolean = false;
+
+  const mainLoopOnFinish = () => {
+    programFinished = true;
+    const endTime = process.hrtime.bigint();
+    const fullProgrammDuration = endTime - startTime;
+    logOnDebug("Program finished in " + hrtimeToHumanReadableString(fullProgrammDuration));
+    logOnDebug(
+      "A total of " +
+        instructionDurations.length +
+        " instructions where executed with an average duration of " +
+        hrtimeToHumanReadableString(averageOfBigIntArray(instructionDurations)) +
+        " (pure exec time is in average " +
+        hrtimeToHumanReadableString(averageOfBigIntArray(instructionPureExecTimeDurations)) +
+        ")"
+    );
+    if (options.delay > 0) {
+      logOnDebug(
+        "Info: Time measurements arent meaningful because an artificial delay of " +
+          options.delay +
+          "ms was added"
+      );
+    }
+  };
 
   while (!programFinished) {
-    mainLoop(() => {
-      programFinished = true;
-      const endTime = process.hrtime.bigint();
-      const fullProgrammDuration = endTime - startTime;
-      logOnDebug("Program finished in " + hrtimeToHumanReadableString(fullProgrammDuration));
-      logOnDebug(
-        "A total of " +
-          instructionDurations.length +
-          " instructions where executed with an average duration of " +
-          hrtimeToHumanReadableString(averageOfBigIntArray(instructionDurations)) +
-          " (pure exec time is in average " +
-          hrtimeToHumanReadableString(averageOfBigIntArray(instructionPureExecTimeDurations)) +
-          ")"
-      );
-    });
+    mainLoop(mainLoopOnFinish);
+
+    if (options.delay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, options.delay));
+    }
   }
 };
 

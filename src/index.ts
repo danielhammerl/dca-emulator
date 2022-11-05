@@ -7,6 +7,7 @@ import { program } from "commander";
 program
   .argument("[source]", "source file", "./source.dcabin")
   .option("--debug", "debug mode", false)
+  .option("--delay <delay>", "(in ms) add a delay after each instruction for a artificial slow down", "0")
   .action((source, options) => {
     const startTime = process.hrtime.bigint();
     // read utf-8 representation of bytecode from given input
@@ -15,7 +16,7 @@ program
       process.env.DEBUG = "true";
     }
 
-    run(sourceCode, startTime);
+    run(sourceCode, startTime, { delay: parseInt(options.delay ?? "0") || 0 });
   });
 
 program.parse();
