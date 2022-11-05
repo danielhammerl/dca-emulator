@@ -3,6 +3,7 @@ import fs from "fs";
 import { run } from "./emulator";
 import { EOL } from "os";
 
+// read utf-8 representation of bytecode from given input
 const sourceCode = fs
   .readFileSync(process.argv[2] || "./source.dcabin", { encoding: "utf-8" })
   .replaceAll(EOL, " ");
