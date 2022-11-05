@@ -9,12 +9,14 @@ import {
   MAX_HALF_WORD_VALUE,
 } from "@danielhammerl/dca-architecture";
 
-export const hexToDec = (hex: string): number => parseInt(hex.replaceAll("#", ""), 16);
+export const hexToDec = (hex: string): number =>
+  parseInt(hex.replaceAll("#", "").replaceAll("0x", ""), 16);
+
 export const decToHex = (dec: number, withPrefix: boolean = true): string => {
   if (dec < 0) {
     throw new Error("decToHex only supports positive numbers and zero");
   }
-  return (withPrefix ? "#" : "") + dec.toString(16);
+  return (withPrefix ? "0x" : "") + dec.toString(16).padStart(2, "0");
 };
 
 export const decToByte = (dec: number): Byte => {
@@ -25,6 +27,9 @@ export const decToByte = (dec: number): Byte => {
   return normalizedValue.toString(2).padStart(BYTE_LENGTH, "0") as Byte;
 };
 export const byteToDec = (byte: Byte): number => parseInt(byte, 2);
+
+export const byteToHex = (byte: Byte): string => decToHex(byteToDec(byte));
+export const halfWordToHex = (halfWord: HalfWord): string => decToHex(halfWordToDec(halfWord));
 
 export const decToHalfWord = (dec: number): HalfWord => {
   if (dec < 0) {

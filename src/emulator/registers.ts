@@ -6,6 +6,7 @@ import {
   Registers,
   registerBinaryCode,
 } from "@danielhammerl/dca-architecture";
+import { halfWordToHex } from "./util";
 
 const readOnlyRegisterList: Partial<typeof Registers> = ["RPC", "RSP"];
 
@@ -58,6 +59,14 @@ export const getRegisterValue = (register: typeof Registers[number] | HalfWord) 
   return registerData[registerName];
 };
 
-export const registerDump = (): typeof registerData => {
-  return cloneDeep(registerData);
+export const registerDump = (): void => {
+  const data = cloneDeep(registerData);
+  console.log("Register dump:");
+  console.log(
+    (Object.keys(data) as Array<keyof typeof data>).reduce((carry, name) => {
+      // @ts-ignore
+      carry[name] = halfWordToHex(data[name]);
+      return carry;
+    }, {})
+  );
 };

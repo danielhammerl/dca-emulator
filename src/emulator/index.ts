@@ -3,8 +3,10 @@ import {
   averageOfBigIntArray,
   decToHalfWord,
   halfWordToDec,
+  halfWordToHex,
   hrtimeToHumanReadableString,
   isByte,
+  isDebug,
   logOnDebug,
 } from "./util";
 import { getMemoryCell, setMemoryCell } from "./memory";
@@ -79,7 +81,7 @@ const mainLoop = (onFinish: () => void) => {
   const instructionStart = process.hrtime.bigint();
   const currentInstruction = getRegisterValue("RPC");
   const currentInstructionIndex = halfWordToDec(currentInstruction);
-  logOnDebug("Run instruction at: " + currentInstruction);
+  logOnDebug("Run instruction at: " + halfWordToHex(currentInstruction));
   const instruction: Instruction = {
     opcode: getMemoryCell(currentInstructionIndex),
     operand1: [
@@ -99,8 +101,9 @@ const mainLoop = (onFinish: () => void) => {
     InstructionMap[instructionName](instruction.operand1, instruction.operand2);
     instructionExecTimeEnd = process.hrtime.bigint();
     logOnDebug("Instruction finished");
-    logOnDebug("cpu dump:");
-    logOnDebug(registerDump());
+    if (isDebug()) {
+      registerDump();
+    }
   } catch (e) {
     throw new Error(
       "Error while running instruction " + currentInstructionIndex + " with error " + e
