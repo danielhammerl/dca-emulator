@@ -1,36 +1,44 @@
 import sdl from "@kmamal/sdl";
 
-let window: any | undefined;
-let param = 4;
+const WINDOW_HEIGHT = 150;
+const WINDOW_WIDTH = 150;
 
-export const initGpu = () => {
-  window = sdl.video.createWindow({
-    title: "Hello, World!",
-  });
+const scale = 5;
 
-  setInterval(() => {
-    render();
-  }, 2000);
+let window = sdl.video.createWindow({
+  title: "dca-emulator video adapter",
+  accelerated: true,
+  width: WINDOW_WIDTH * scale,
+  height: WINDOW_HEIGHT * scale,
+});
+
+const { width, height } = window;
+const stride = width * 4;
+const videoBuffer = Buffer.alloc(height * stride);
+
+export type GpuPixel = {
+  xPos: number;
+  yPos: number;
+  color: {
+    red: number;
+    green: number;
+    blue: number;
+  };
 };
 
-const render = () => {
-  if (!window) {
-    return;
-  }
+// special thanks go to my 5th grade math teacher here
+export const draw = (pixel: GpuPixel) => {
+  const pixelInBufferIndex = pixel.yPos * window.height * 4 * scale + pixel.xPos * 4 * scale;
 
-  const { width, height } = window;
-  const stride = width * 4;
-  const buffer = Buffer.alloc(stride * height);
-
-  let offset = 0;
-  for (let i = 0; i < height; i++) {
-    for (let j = 0; j < width; j++) {
-      buffer[offset++] = Math.floor((256 * i) / height); // R
-      buffer[offset++] = Math.floor((256 * j) / width); // G
-      buffer[offset++] = 0; // B
-      buffer[offset++] = 255; // A
+  for (let xOffset = 0; xOffset < scale; xOffset++) {
+    for (let yOffset = 0; yOffset < scale; yOffset++) {
+      const offset = xOffset * 4 + yOffset * window.height * 4;
+      videoBuffer[pixelInBufferIndex + offset] = pixel.color.red;
+      videoBuffer[pixelInBufferIndex + offset + 1] = pixel.color.green;
+      videoBuffer[pixelInBufferIndex + offset + 2] = pixel.color.blue;
+      videoBuffer[pixelInBufferIndex + offset + 3] = 255;
     }
   }
 
-  window.render(width, height, stride, "rgba32", buffer);
+  window.render(width, height, stride, "rgba32", videoBuffer);
 };

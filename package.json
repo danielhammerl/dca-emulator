@@ -16,7 +16,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@danielhammerl/dca-architecture": "^0.2.1",
+    "@danielhammerl/dca-architecture": "^0.3.0",
     "commander": "^9.4.1",
     "@kmamal/gl": "^6.0.1-1",
     "@kmamal/sdl": "^0.5.2",
