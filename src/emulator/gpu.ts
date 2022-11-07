@@ -1,5 +1,6 @@
 import sdl from "@kmamal/sdl";
 import throttle from "lodash.throttle";
+import { shortWait } from "./util";
 
 const WINDOW_HEIGHT = 150;
 const WINDOW_WIDTH = 150;
@@ -10,7 +11,7 @@ let window: sdl.Sdl.Video.Window | undefined;
 let videoBuffer: Buffer | undefined;
 let width: number, height: number, stride: number;
 
-export const initGpu = () => {
+export const initGpu = async () => {
   window = sdl.video.createWindow({
     title: "dca-emulator video adapter",
     accelerated: true,
@@ -22,6 +23,7 @@ export const initGpu = () => {
   height = window.height;
   stride = window.width * 4;
   videoBuffer = Buffer.alloc(height * stride);
+  await shortWait();
 };
 
 export type GpuPixel = {
@@ -35,7 +37,7 @@ export type GpuPixel = {
 };
 
 // special thanks goes to my 5th grade math teacher here
-export const draw = (pixel: GpuPixel) => {
+export const buffer = (pixel: GpuPixel) => {
   const pixelInBufferIndex = pixel.yPos * window!.height * 4 * scale + pixel.xPos * 4 * scale;
 
   for (let xOffset = 0; xOffset < scale; xOffset++) {
@@ -47,8 +49,11 @@ export const draw = (pixel: GpuPixel) => {
       videoBuffer![pixelInBufferIndex + offset + 3] = 255;
     }
   }
+};
 
+export const draw = async () => {
   rerender();
+  await shortWait();
 };
 
 // dont rerender on every tick,

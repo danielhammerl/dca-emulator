@@ -7,6 +7,7 @@ import {
   MAX_BYTE_VALUE,
   MAX_HALF_WORD_VALUE,
 } from "@danielhammerl/dca-architecture";
+import throttle from "lodash.throttle";
 
 export const hexToDec = (hex: string): number =>
   parseInt(hex.replaceAll("#", "").replaceAll("0x", ""), 16);
@@ -100,3 +101,5 @@ export const frequencyHumanReadableString = (frequency: number): string => {
 
 export const averageOfBigIntArray = (arr: bigint[]): bigint =>
   arr.reduce((a, b) => a + b, BigInt(0)) / BigInt(arr.length);
+
+export const shortWait = throttle(() => new Promise((resolve) => setTimeout(resolve, 1 / 1000000)), 500);

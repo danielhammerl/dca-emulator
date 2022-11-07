@@ -27,15 +27,14 @@ import {
   Instruction,
 } from "@danielhammerl/dca-architecture";
 import { RunOptions } from "./types";
-import { clear, draw } from "./gpu";
-import throttle from "lodash.throttle";
+import { buffer, clear, draw } from "./gpu";
 
 let programFinished: boolean = false;
 const instructionDurations: bigint[] = [];
 const instructionPureExecTimeDurations: bigint[] = [];
 const mainLoopDurations: bigint[] = [];
 
-export const run = async (instructionsFromFile: string, startTime: bigint, options: RunOptions) => {
+export const run = async (instructionsFromFile: string, options: RunOptions) => {
   logOnDebug("starting in debug mode");
   const instructionsFromFileAsArray = instructionsFromFile.split(" ");
 
@@ -60,15 +59,13 @@ export const run = async (instructionsFromFile: string, startTime: bigint, optio
     programFinished = true;
   };
 
+  const startTime = process.hrtime.bigint();
   while (!programFinished) {
     const mainLoopStartTimestamp = process.hrtime.bigint();
-    mainLoop(mainLoopOnFinish, options);
+    await mainLoop(mainLoopOnFinish, options);
 
     if (options.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, options.delay));
-    } else if (!options.noGpu) {
-      // from time to time we have to make a short wait for opengl stuff
-      await shortWait();
     }
     const mainLoopEndTimestamp = process.hrtime.bigint();
     const diff = mainLoopEndTimestamp - mainLoopStartTimestamp;
@@ -113,9 +110,7 @@ export const run = async (instructionsFromFile: string, startTime: bigint, optio
   );
 };
 
-const shortWait = throttle(() => new Promise((resolve) => setTimeout(resolve, 1 / 1000000)), 500);
-
-const mainLoop = (onFinish: () => void, options: RunOptions) => {
+const mainLoop = async (onFinish: () => void, options: RunOptions) => {
   const instructionStart = process.hrtime.bigint();
   const currentInstruction = getRegisterValue("RPC");
   const currentInstructionIndex = halfWordToDec(currentInstruction);
@@ -149,7 +144,7 @@ const mainLoop = (onFinish: () => void, options: RunOptions) => {
   }
 
   if (!options.noGpu) {
-    gpuCycle();
+    await gpuCycle();
   }
 
   const nextInstruction = getRegisterValue("RPC");
@@ -174,7 +169,7 @@ const mainLoop = (onFinish: () => void, options: RunOptions) => {
   }
 };
 
-const gpuCycle = () => {
+const gpuCycle = async () => {
   const gpuOperationOpCode = getMemoryCell(GPU_ADDRESS_BUS_POINTER);
   const gpuAddressBusPointerIndex = halfWordToDec(GPU_ADDRESS_BUS_POINTER);
   const gpuInstruction = getGpuInstructionFromOpcode(gpuOperationOpCode);
@@ -183,7 +178,7 @@ const gpuCycle = () => {
     console.log("Reading GPU instruction:" + gpuInstruction);
   }
 
-  if (gpuInstruction === "DRAW") {
+  if (gpuInstruction === "BUFFER") {
     const xPosData: HalfWord = [
       getMemoryCell(gpuAddressBusPointerIndex + 1),
       getMemoryCell(gpuAddressBusPointerIndex + 2),
@@ -209,7 +204,9 @@ const gpuCycle = () => {
     const green = (greenData / Math.pow(2, 6)) * 255;
     const blue = (blueData / Math.pow(2, 5)) * 255;
 
-    draw({ xPos, yPos, color: { red, green, blue } });
+    buffer({ xPos, yPos, color: { red, green, blue } });
+  } else if (gpuInstruction === "DRAW") {
+    await draw();
   } else if (gpuInstruction === "CLEAR") {
     clear();
   }

@@ -23,7 +23,6 @@ program
     "0"
   )
   .action((source, options) => {
-    const startTime = process.hrtime.bigint();
     // read utf-8 representation of bytecode from given input
     const byteCode = options.assemble
       ? assemble(source)
@@ -36,16 +35,19 @@ program
       process.env.DEBUG_GPU = "true";
     }
 
-    if (!options.noGpu) {
-      initGpu();
-    }
+    const start = () =>
+      run(byteCode, {
+        delay: parseInt(options.delay ?? "0") || 0,
+        debugGpu: options.debugGpu,
+        noGpu: options.noGpu,
+        timingData: options.timingData || options.debug,
+      });
 
-    run(byteCode, startTime, {
-      delay: parseInt(options.delay ?? "0") || 0,
-      debugGpu: options.debugGpu,
-      noGpu: options.noGpu,
-      timingData: options.timingData || options.debug,
-    });
+    if (!options.noGpu) {
+      initGpu().then(start);
+    } else {
+      start();
+    }
   });
 
 const assemble = (sourcePath: string): string =>
