@@ -1,4 +1,4 @@
-SET r00 0x02 # set gpu opcode DRAW
+SET r00 0x02 # set gpu opcode BUFFER
 SET r01 0x01 # set xpos to 1
 SET r02 0x01 # set ypos to 1
 SET r03 0xff20 # set color to yellow-ish
@@ -21,3 +21,6 @@ ADD r01 r08
 SET r08 0x3c # jump to line x3c / d40
 
 CJUMPI R08 r09
+
+SET r00 0x03 # set gpu opcode DRAW
+STORE r00 r04
