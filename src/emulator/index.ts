@@ -2,6 +2,7 @@ import { getRegisterValue, registerDump, setRegisterValue } from "./registers";
 import {
   averageOfBigIntArray,
   decToHalfWord,
+  frequencyHumanReadableString,
   halfWordToDec,
   halfWordToHex,
   hrtimeToHumanReadableString,
@@ -61,11 +62,11 @@ export const run = async (instructionsFromFile: string, startTime: bigint, optio
 
   while (!programFinished) {
     const mainLoopStartTimestamp = process.hrtime.bigint();
-    mainLoop(mainLoopOnFinish);
+    mainLoop(mainLoopOnFinish, options);
 
     if (options.delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, options.delay));
-    } else {
+    } else if (!options.noGpu) {
       // from time to time we have to make a short wait for opengl stuff
       await shortWait();
     }
@@ -77,18 +78,20 @@ export const run = async (instructionsFromFile: string, startTime: bigint, optio
 
   const endTime = process.hrtime.bigint();
   const fullProgrammDuration = endTime - startTime;
-  logOnDebug("Program finished in " + hrtimeToHumanReadableString(fullProgrammDuration));
-  logOnDebug(
-    "A total of " +
-      instructionDurations.length +
-      " instructions where executed with an average duration of " +
-      hrtimeToHumanReadableString(averageOfBigIntArray(instructionDurations)) +
-      " (pure exec time is in average " +
-      hrtimeToHumanReadableString(averageOfBigIntArray(instructionPureExecTimeDurations)) +
-      ")"
-  );
-  if (options.delay > 0) {
-    logOnDebug(
+  if (options.timingData) {
+    console.log("Program finished in " + hrtimeToHumanReadableString(fullProgrammDuration));
+    console.log(
+      "A total of " +
+        instructionDurations.length +
+        " instructions were executed with an average duration of " +
+        hrtimeToHumanReadableString(averageOfBigIntArray(instructionDurations)) +
+        " (pure exec time is in average " +
+        hrtimeToHumanReadableString(averageOfBigIntArray(instructionPureExecTimeDurations)) +
+        ")"
+    );
+  }
+  if (options.delay > 0 && options.timingData) {
+    console.log(
       "Info: Time measurements arent meaningful because an artificial delay of " +
         options.delay +
         "ms was added"
@@ -96,14 +99,23 @@ export const run = async (instructionsFromFile: string, startTime: bigint, optio
   }
 
   const averageMainLoopTime = averageOfBigIntArray(mainLoopDurations);
-  // const frequency = BigInt(1) / (fullProgrammDuration / BigInt(instructionDurations.length));
-  logOnDebug("Mainloop took " + hrtimeToHumanReadableString(averageMainLoopTime));
+  const durationInSeconds = Number(fullProgrammDuration / BigInt(1_000_000_000));
+  const instructionCount = instructionDurations.length;
+  const instructionsPerSecond = instructionCount / durationInSeconds;
+
+  const frequency = frequencyHumanReadableString(instructionsPerSecond);
+  console.log(
+    "Mainloop took " +
+      hrtimeToHumanReadableString(averageMainLoopTime) +
+      " on average (frequency: " +
+      frequency +
+      ")"
+  );
 };
 
 const shortWait = throttle(() => new Promise((resolve) => setTimeout(resolve, 1 / 1000000)), 500);
 
-const mainLoop = (onFinish: () => void) => {
-  logOnDebug("-------------------------------");
+const mainLoop = (onFinish: () => void, options: RunOptions) => {
   const instructionStart = process.hrtime.bigint();
   const currentInstruction = getRegisterValue("RPC");
   const currentInstructionIndex = halfWordToDec(currentInstruction);
@@ -136,7 +148,9 @@ const mainLoop = (onFinish: () => void) => {
     );
   }
 
-  gpuCycle();
+  if (!options.noGpu) {
+    gpuCycle();
+  }
 
   const nextInstruction = getRegisterValue("RPC");
   const finished = isEqual(nextInstruction, getRegisterValue("RSP"));

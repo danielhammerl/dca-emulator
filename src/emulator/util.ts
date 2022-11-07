@@ -87,5 +87,16 @@ export const hrtimeToHumanReadableString = (time: bigint): string => {
   return "~" + tempTime.toString() + suffix[counter];
 };
 
+export const frequencyHumanReadableString = (frequency: number): string => {
+  let counter = 0;
+  let tempTime = frequency;
+  const suffix = ["Hz", "KHz", "MHz", "GHz"];
+  while (tempTime >= 10000 && counter < 3) {
+    tempTime = tempTime / 1000;
+    counter++;
+  }
+  return "~" + Math.floor(tempTime).toString() + suffix[counter];
+};
+
 export const averageOfBigIntArray = (arr: bigint[]): bigint =>
   arr.reduce((a, b) => a + b, BigInt(0)) / BigInt(arr.length);

@@ -4,11 +4,14 @@ import { run } from "./emulator";
 import { EOL } from "os";
 import { program } from "commander";
 import { execSync } from "child_process";
+import { initGpu } from "./emulator/gpu";
 
 program
   .argument("[source]", "source file", "./source.dcabin")
   .option("--debug", "debug mode", false)
-  .option("--debugGpu", "debug gpu mode", false)
+  .option("--debug-gpu", "debug gpu mode", false)
+  .option("--noGpu", "disable gpu", false)
+  .option("--timing-data", "show timing and speed informations", false)
   .option(
     "-as, --assemble",
     "use dasm as input instead of bytecode and assemble it before emulating",
@@ -29,13 +32,19 @@ program
       process.env.DEBUG = "true";
     }
 
-    if(options.debugGpu) {
+    if (options.debugGpu) {
       process.env.DEBUG_GPU = "true";
+    }
+
+    if (!options.noGpu) {
+      initGpu();
     }
 
     run(byteCode, startTime, {
       delay: parseInt(options.delay ?? "0") || 0,
       debugGpu: options.debugGpu,
+      noGpu: options.noGpu,
+      timingData: options.timingData || options.debug,
     });
   });
 
