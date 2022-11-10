@@ -23,6 +23,7 @@ const registerData: Record<typeof Registers[number], HalfWord> = {
   R07: EMPTY_HALF_WORD,
   R08: EMPTY_HALF_WORD,
   R09: EMPTY_HALF_WORD,
+  R10: EMPTY_HALF_WORD,
 };
 
 const getRegisterNameByBinaryCode = (data: HalfWord): typeof Registers[number] => {

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "start:debug": "ts-node src/index.ts ./examples/gpu2.dcaasm -as --timing-data --debug",
-    "start:debug-timing": "ts-node src/index.ts ./examples/gpu2.dcaasm --timing-data --noGpu -as",
+    "start:debug-timing": "ts-node src/index.ts ./examples/gpu3.dbins --timing-data --noGpu",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
@@ -17,7 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@danielhammerl/dca-architecture": "^0.4.0",
+    "@danielhammerl/dca-architecture": "^0.5.0",
     "@kmamal/gl": "^6.0.1-1",
     "@kmamal/sdl": "^0.5.2",
     "commander": "^9.4.1",

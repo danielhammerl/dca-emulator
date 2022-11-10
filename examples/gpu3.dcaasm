@@ -1,0 +1,35 @@
+SET r00 0x02 # set gpu opcode BUFFER
+SET r01 0x01 # set xpos to 1
+SET r02 0x01 # set ypos to 1
+SET r03 0xff20 # set color to yellow-ish
+SET r09 0xffff # max runs ...
+SET r10 0x00ff # ... times this
+
+SET r04 0xff00
+SET r05 0xff01
+SET r06 0xff03
+SET r07 0xff05
+
+STORE r00 r04
+STOREH r02 r06
+STOREH r03 r07
+
+STOREH r01 r05
+SET r08 0x01
+SUB r09 r08
+ADD r01 r08
+
+SET r08 0x3c # jump to line x3c / d40
+
+CJUMPI R08 r09
+
+SET r08 0x01
+SUB r10 r08
+SET r09 0xffff
+
+SET r08 0x3c # jump to line x3c / d40
+CJUMPI r08 r10
+
+
+SET r00 0x03 # set gpu opcode DRAW
+STORE r00 r04
