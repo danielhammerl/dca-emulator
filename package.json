@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
-    "start:debug": "ts-node src/index.ts --debug",
+    "start:debug": "ts-node src/index.ts ./examples/gpu2.dcaasm -as --timing-data --debug",
     "start:debug-timing": "ts-node src/index.ts ./examples/gpu2.dcaasm --timing-data --noGpu -as",
     "test": "jest",
     "test:coverage": "jest --coverage"
