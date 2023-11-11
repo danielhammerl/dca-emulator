@@ -11,7 +11,7 @@
       "dependencies": {
         "@danielhammerl/dca-architecture": "^0.5.0",
         "@kmamal/gl": "^6.0.1-1",
-        "@kmamal/sdl": "^0.5.2",
+        "@kmamal/sdl": "^0.9.0",
         "commander": "^9.4.1",
         "lodash.clonedeep": "^4.5.0",
         "lodash.isequal": "^4.5.0",
@@ -1030,12 +1030,12 @@
       }
     },
     "node_modules/@kmamal/sdl": {
-      "version": "0.5.2",
-      "resolved": "https://registry.npmjs.org/@kmamal/sdl/-/sdl-0.5.2.tgz",
-      "integrity": "sha512-SgH1I9+3TjQsO0GCdZswMW2Q/QyEUx6fnPrh7eA4sL9xNXMgceGMEniB7L1VaZE1w2b4AL5Gokb6PWtgtp7yvA==",
+      "version": "0.9.0",
+      "resolved": "https://registry.npmjs.org/@kmamal/sdl/-/sdl-0.9.0.tgz",
+      "integrity": "sha512-dnFGWN3fU9eRlFq6I/+ttH4HOFtNSBFfJl7RDZ6EZFZoUVGtQ5uub4GrdHwVSytSgn3YGp2tLeeC2smxk+MXJA==",
       "hasInstallScript": true,
       "dependencies": {
-        "tar": "^6.1.11"
+        "tar": "^6.1.15"
       }
     },
     "node_modules/@npmcli/fs": {
@@ -4457,13 +4457,13 @@
       }
     },
     "node_modules/tar": {
-      "version": "6.1.12",
-      "resolved": "https://registry.npmjs.org/tar/-/tar-6.1.12.tgz",
-      "integrity": "sha512-jU4TdemS31uABHd+Lt5WEYJuzn+TJTCBLljvIAHZOz6M9Os5pJ4dD+vRFLxPa/n3T0iEFzpi+0x1UfuDZYbRMw==",
+      "version": "6.2.0",
+      "resolved": "https://registry.npmjs.org/tar/-/tar-6.2.0.tgz",
+      "integrity": "sha512-/Wo7DcT0u5HUV486xg675HtjNd3BXZ6xDbzsCUZPt5iw8bTQ63bP0Raut3mvro9u+CUyq7YQd8Cx55fsZXxqLQ==",
       "dependencies": {
         "chownr": "^2.0.0",
         "fs-minipass": "^2.0.0",
-        "minipass": "^3.0.0",
+        "minipass": "^5.0.0",
         "minizlib": "^2.1.1",
         "mkdirp": "^1.0.3",
         "yallist": "^4.0.0"
@@ -4501,6 +4501,14 @@
       },
       "engines": {
         "node": ">=6"
+      }
+    },
+    "node_modules/tar/node_modules/minipass": {
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/minipass/-/minipass-5.0.0.tgz",
+      "integrity": "sha512-3FnjYuehv9k6ovOEbyOswadCDPX1piCfhV8ncmYtHOjuPwylVWsghTLo7rabjC3Rx5xD4HDx8Wm1xnMF7S5qFQ==",
+      "engines": {
+        "node": ">=8"
       }
     },
     "node_modules/test-exclude": {
@@ -5712,11 +5720,11 @@
       }
     },
     "@kmamal/sdl": {
-      "version": "0.5.2",
-      "resolved": "https://registry.npmjs.org/@kmamal/sdl/-/sdl-0.5.2.tgz",
-      "integrity": "sha512-SgH1I9+3TjQsO0GCdZswMW2Q/QyEUx6fnPrh7eA4sL9xNXMgceGMEniB7L1VaZE1w2b4AL5Gokb6PWtgtp7yvA==",
+      "version": "0.9.0",
+      "resolved": "https://registry.npmjs.org/@kmamal/sdl/-/sdl-0.9.0.tgz",
+      "integrity": "sha512-dnFGWN3fU9eRlFq6I/+ttH4HOFtNSBFfJl7RDZ6EZFZoUVGtQ5uub4GrdHwVSytSgn3YGp2tLeeC2smxk+MXJA==",
       "requires": {
-        "tar": "^6.1.11"
+        "tar": "^6.1.15"
       }
     },
     "@npmcli/fs": {
@@ -8274,16 +8282,23 @@
       "dev": true
     },
     "tar": {
-      "version": "6.1.12",
-      "resolved": "https://registry.npmjs.org/tar/-/tar-6.1.12.tgz",
-      "integrity": "sha512-jU4TdemS31uABHd+Lt5WEYJuzn+TJTCBLljvIAHZOz6M9Os5pJ4dD+vRFLxPa/n3T0iEFzpi+0x1UfuDZYbRMw==",
+      "version": "6.2.0",
+      "resolved": "https://registry.npmjs.org/tar/-/tar-6.2.0.tgz",
+      "integrity": "sha512-/Wo7DcT0u5HUV486xg675HtjNd3BXZ6xDbzsCUZPt5iw8bTQ63bP0Raut3mvro9u+CUyq7YQd8Cx55fsZXxqLQ==",
       "requires": {
         "chownr": "^2.0.0",
         "fs-minipass": "^2.0.0",
-        "minipass": "^3.0.0",
+        "minipass": "^5.0.0",
         "minizlib": "^2.1.1",
         "mkdirp": "^1.0.3",
         "yallist": "^4.0.0"
+      },
+      "dependencies": {
+        "minipass": {
+          "version": "5.0.0",
+          "resolved": "https://registry.npmjs.org/minipass/-/minipass-5.0.0.tgz",
+          "integrity": "sha512-3FnjYuehv9k6ovOEbyOswadCDPX1piCfhV8ncmYtHOjuPwylVWsghTLo7rabjC3Rx5xD4HDx8Wm1xnMF7S5qFQ=="
+        }
       }
     },
     "tar-fs": {
